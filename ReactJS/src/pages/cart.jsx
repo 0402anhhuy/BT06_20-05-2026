@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../util/axios.customize";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/cart.css";
 
 const CartPage = () => {
     const [cart, setCart] = useState({ items: [] });
@@ -11,7 +12,7 @@ const CartPage = () => {
         try {
             setLoading(true);
             const res = await axios.get("/v1/api/cart");
-            setCart(res || { items: [] });
+            setCart(res?.data ?? res ?? { items: [] });
         } finally {
             setLoading(false);
         }
