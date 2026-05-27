@@ -12,6 +12,7 @@ import {
     Rate,
     Tag,
     Divider,
+    message,
 } from "antd";
 import { ShoppingCartOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useParams, useNavigate } from "react-router-dom";
@@ -65,6 +66,16 @@ const ProductDetail = () => {
     const discount = product.discount || 0;
     const finalPrice = product.price;
     const originalPrice = product.originalPrice || product.price;
+
+    const addToCart = async () => {
+        try {
+            await axios.post("/v1/api/cart", { productId: id, qty: quantity });
+            message.success("Đã thêm vào giỏ hàng");
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+            message.error(error?.message || "Lỗi khi thêm vào giỏ hàng");
+        }
+    };
 
     return (
         <div style={{ padding: "20px" }}>
@@ -249,6 +260,7 @@ const ProductDetail = () => {
                                 icon={<ShoppingCartOutlined />}
                                 disabled={product.stock <= 0}
                                 block
+                                onClick={addToCart}
                             >
                                 Thêm vào giỏ ({quantity})
                             </Button>
