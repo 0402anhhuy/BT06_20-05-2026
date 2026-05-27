@@ -13,7 +13,10 @@ const addToCart = async (email, productId, qty = 1) => {
     const product = await Product.findById(productId);
     if (!product) throw new Error("Product not found");
     const cart = await getCartByEmail(email);
-    const idx = cart.items.findIndex((i) => String(i.product) === String(productId));
+    const idx = cart.items.findIndex((i) => {
+        const pid = i.product && (i.product._id || i.product);
+        return String(pid) === String(productId);
+    });
     if (idx >= 0) {
         cart.items[idx].qty += qty;
     } else {
@@ -26,7 +29,10 @@ const addToCart = async (email, productId, qty = 1) => {
 
 const updateItem = async (email, productId, qty) => {
     const cart = await getCartByEmail(email);
-    const idx = cart.items.findIndex((i) => String(i.product) === String(productId));
+    const idx = cart.items.findIndex((i) => {
+        const pid = i.product && (i.product._id || i.product);
+        return String(pid) === String(productId);
+    });
     if (idx >= 0) {
         cart.items[idx].qty = qty;
         cart.updatedAt = new Date();
@@ -37,7 +43,10 @@ const updateItem = async (email, productId, qty) => {
 
 const removeItem = async (email, productId) => {
     const cart = await getCartByEmail(email);
-    cart.items = cart.items.filter((i) => String(i.product) !== String(productId));
+    cart.items = cart.items.filter((i) => {
+        const pid = i.product && (i.product._id || i.product);
+        return String(pid) !== String(productId);
+    });
     cart.updatedAt = new Date();
     await cart.save();
     return cart;
