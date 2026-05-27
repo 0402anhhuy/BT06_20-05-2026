@@ -14,6 +14,7 @@ import {
     Space,
     Tag,
 } from "antd";
+import { message } from "antd";
 import { SearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import axios from "../util/axios.customize";
@@ -196,6 +197,15 @@ const ProductList = () => {
                 <Button
                     icon={<ShoppingCartOutlined />}
                     disabled={product.stock <= 0}
+                    onClick={async () => {
+                        try {
+                            await axios.post("/v1/api/cart", { productId: product._id, qty: 1 });
+                            message.success("Đã thêm vào giỏ hàng");
+                        } catch (error) {
+                            console.error("Add to cart error:", error);
+                            message.error(error?.message || "Lỗi khi thêm vào giỏ hàng");
+                        }
+                    }}
                 />
             </Space>
         </Card>
